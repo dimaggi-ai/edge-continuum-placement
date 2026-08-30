@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "edge-continuum-placement"
+version = "1.0.0"
+description = "Placement engine for the tower->hub->metro->central AI compute continuum: physics gates, workload verdicts, fleet arithmetic"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Margaret Nanyonga" }]
+keywords = ["ai-ran", "edge-computing", "neocloud", "gpu", "placement",
+            "rdma", "fronthaul", "telecom"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Telecommunications Industry",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: System :: Distributed Computing",
+]
+
+[project.urls]
+Repository = "https://github.com/dimaggi-ai/edge-continuum-placement"
+
+[project.scripts]
+edge-placement = "continuum.cli:main"
+
+[project.optional-dependencies]
+figures = ["matplotlib>=3.7", "numpy>=1.24"]
+
+[tool.setuptools]
+packages = ["continuum"]

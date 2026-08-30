@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+title: "edge-continuum-placement: physics-gated workload placement on the tower-hub-metro-central AI compute continuum"
+authors:
+  - family-names: Nanyonga
+    given-names: Margaret
+date-released: 2026-08-29
+version: 1.0.0
+license: MIT
+repository-code: "https://github.com/dimaggi-ai/edge-continuum-placement"
+keywords:
+  - AI-RAN
+  - edge computing
+  - neocloud
+  - workload placement
+  - RDMA
+  - fronthaul
