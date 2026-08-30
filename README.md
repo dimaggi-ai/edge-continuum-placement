@@ -12,7 +12,7 @@
 
 ![Placement matrix](figures/placement_matrix.png)
 
-Each recommendation names its forcing gate: RAN L1 is forced to the hub by the ~100 µs eCPRI fronthaul budget [11]; the near-RT RIC loop is the *only* workload latency forces below central (to the metro, not the tower); camera and telemetry workloads are forced edgeward by backhaul economics, not latency; sovereign inference pins to the metro PoP — sovereignty is a region pin, not an edge pin. Training never leaves the central factory, and a fantasy 1 MW tower stays blocked: the gates are orthogonal (`make test`).
+Each recommendation names its forcing gate: RAN L1 is forced to the hub by the ~100 µs eCPRI fronthaul budget [11]; the near-RT RIC loop is the *only* workload an application latency SLA forces below central (to the metro, not the tower); camera and telemetry workloads are forced edgeward by backhaul economics, not latency; sovereign inference pins to the metro PoP — sovereignty is a region pin, not an edge pin. Training never leaves the central factory, and a fantasy 1 MW tower stays blocked: the gates are orthogonal (`make test`).
 
 ## Bandwidth cannot buy back distance
 
@@ -22,7 +22,7 @@ Only the bandwidth term of a ring all-reduce can hide behind compute; the 2(n−
 
 ![Lossless ceiling](figures/lossless_ceiling.png)
 
-PFC needs ~2× the one-way bandwidth-delay product — a full round trip of line-rate data — as per-port headroom: ~10 MB at 100 G/80 km (Bifrost's testbed reserved 9.5 MB), ~294 MB at 400 G/600 km (286 MB in Bifrost's simulation) — against tens of MB of real switch buffer [2]. Ultra Ethernet makes PFC optional inside the fabric [5]; it does not repeal BDP across the WAN.
+PFC needs ~2× the one-way bandwidth-delay product — a full round trip of line-rate data — as per-port headroom: ~10 MB at 100 G/80 km (Bifrost's computed requirement: 9.5 MB; its testbed reserved 15.5), ~294 MB at 400 G/600 km (286 MB in Bifrost's simulation) — against tens of MB of real switch buffer [2]. Ultra Ethernet makes PFC optional inside the fabric [5]; it does not repeal BDP across the WAN.
 
 ## Quickstart
 

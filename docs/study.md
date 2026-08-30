@@ -73,8 +73,9 @@ central blocked by the fronthaul gate.
 
 **Lossless transport buys distance with buffer, and the price doubles with
 line rate.** PFC needs ~2× the one-way BDP — a full round trip of
-line-rate data — as headroom per port [2]: Bifrost's 100 G/80 km testbed
-reserved ~9.5 MB of it, and its 400 G/600 km simulation needed 286 MB —
+line-rate data — as headroom per port [2]: Bifrost computed a ~9.5 MB
+requirement for its 100 G/80 km testbed (and reserved 15.5 MB per link
+in practice), and its 400 G/600 km simulation needed 286 MB —
 versus tens of MB of real packet buffer on a switch. Native InfiniBand is stricter still: the 12-bit credit
 window caps it near 1 km at 100 G [2, 3]. Ultra Ethernet relaxes
 losslessness *inside* the fabric [5]; it does not repeal BDP across the
@@ -233,10 +234,11 @@ against this arithmetic.
   from.
 - **`transit_rtt_ms` is a stipulated overhead, not a measured path.** The
   0.1/0.3/1/10 ms ladder stipulates national paths at 2–4× the propagation
-  floor (observed paths in [1] run ~1.5–1.7×); a national operator with a clean backbone could halve the
-  central penalty, which would not change any recommendation in the
-  default library (only `ric-xapp-loop` is transit-sensitive, and it
-  fails central by 5 ms).
+  floor (observed paths in [1] run ~1.5–1.7×); a national operator with a
+  clean backbone could halve the central penalty, which would flip
+  exactly one verdict — `ric-xapp-loop`, the only transit-sensitive
+  archetype, fails central by just 4.9 ms and would move there — and
+  change nothing else.
 - **The COSTLY threshold.** 0.25 Gbps is list-price arithmetic [18];
   committed rates and operator-owned backhaul lower the effective price.
   The verdict is deliberately COSTLY (a priced choice), never BLOCKED.

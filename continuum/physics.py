@@ -58,7 +58,7 @@ def pfc_headroom_mb(rate_gbps: float, km: float,
     """Per-port buffer headroom a lossless (PFC) link must reserve, in MB.
 
     ~2x the one-way BDP = one full round-trip of line-rate data (Bifrost's
-    2-Delta): ~9.8 MB at 100G/80 km (Bifrost's testbed reserved 9.5 MB),
+    2-Delta): ~9.8 MB at 100G/80 km (Bifrost's computed requirement: 9.5),
     ~294 MB at 400G/600 km (Bifrost simulated 286 MB).
     """
     return mult * bdp_mb(rate_gbps, km)

@@ -27,9 +27,10 @@ class TestPropagation(unittest.TestCase):
 
 class TestLosslessHeadroom(unittest.TestCase):
     def test_bifrost_testbed_point(self):
-        # Bifrost (ICNP'23): 80 km / 100G testbed reserved ~9.5 MB of
-        # headroom (~2x the one-way BDP, Bifrost's 2-Delta). Our 4.9 us/km
-        # gives 392 us one-way -> headroom ~9.8 MB, within ~5%.
+        # Bifrost (ICNP'23): 80 km / 100G testbed required ~9.5 MB of
+        # headroom (~2x the one-way BDP, Bifrost's 2-Delta; 15.5 MB was
+        # reserved in practice). Our 4.9 us/km gives 392 us one-way ->
+        # headroom ~9.8 MB, within ~5%.
         self.assertAlmostEqual(physics.pfc_headroom_mb(100, 80), 9.5,
                                delta=0.5)
 
