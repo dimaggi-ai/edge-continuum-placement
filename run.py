@@ -35,10 +35,13 @@ plt.rcParams.update({
 def efficiency_cliff():
     km = np.logspace(-1, 3.7, 300)
     fig, ax = plt.subplots(figsize=(7.2, 4.4))
+    # Payload sized so the 400G bandwidth term is PARTIALLY exposed
+    # (~0.6 ms past the compute budget) while 1600G hides fully — the
+    # comparison is genuine, not identical-by-construction.
     base = physics.CollectiveScenario(
-        n_ranks=16, payload_gb=1.0, inter_site_gbps=400.0, compute_ms=200.0)
+        n_ranks=16, payload_gb=5.35, inter_site_gbps=400.0, compute_ms=200.0)
     wide = physics.CollectiveScenario(
-        n_ranks=16, payload_gb=1.0, inter_site_gbps=1600.0, compute_ms=200.0)
+        n_ranks=16, payload_gb=5.35, inter_site_gbps=1600.0, compute_ms=200.0)
     ax.plot(km, [physics.sync_step_efficiency(base, k) for k in km],
             color="#c0392b", lw=3, label="400 Gbps inter-site")
     ax.plot(km, [physics.sync_step_efficiency(wide, k) for k in km],
@@ -51,7 +54,7 @@ def efficiency_cliff():
     ax.annotate(
         "4x the bandwidth moves the curve by <1%:\nthe exposed term is "
         "serial hop latency,\nwhich only distance controls\n"
-        "(Corning 2026 measured <=0.66% from 2x)",
+        "(Corning 2026, in simulation: <=0.66% from 2x)",
         xy=(300, e300), xytext=(1.3, 0.62), fontsize=8,
         arrowprops=dict(arrowstyle="->", color="#7f8c8d", lw=1))
     ax.set_xscale("log")
@@ -62,7 +65,7 @@ def efficiency_cliff():
                  "indistinguishable", fontsize=10)
     ax.legend(frameon=False, loc="lower left")
     fig.text(0.99, 0.01,
-             "ring all-reduce, 16 ranks, 1 GB payload, 200 ms compute; "
+             "ring all-reduce, 16 ranks, 5.35 GB payload, 200 ms compute; "
              "only the bandwidth term overlaps compute",
              fontsize=7, color="#7f8c8d", ha="right")
     fig.tight_layout()
@@ -83,8 +86,8 @@ def lossless_ceiling():
     ax.axhline(40, color="#2c3e50", ls="--", lw=1)
     ax.text(1580, 44, "metro DWDM reach (~40 km)", fontsize=8,
             ha="right", color="#2c3e50")
-    # Bifrost's published testbed point: 100G / 80 km needs ~9.5 MB BDP
-    # (19 MB headroom) — mark where 64 MB actually runs out.
+    # Bifrost's testbed at 100G / 80 km reserved ~9.5 MB of headroom
+    # (~2x one-way BDP); mark where 64 MB actually runs out at 100G.
     ax.scatter([100], [physics.pfc_max_lossless_km(100, 64.0)], zorder=5,
                color="#2980b9", s=28)
     ax.set_yscale("log")

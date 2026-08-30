@@ -14,9 +14,10 @@ York–San Francisco, 4,148 km fiber route → ~21 ms one-way / **~42 ms RTT**
 [M2 Optics, "Calculating Optical Fiber Latency"](https://www.m2optics.com/blog/bid/70587/calculating-optical-fiber-latency) ·
 [Grigorik, *High Performance Browser Networking*, Table 1-1](https://hpbn.co/primer-on-latency-and-bandwidth/)
 
-**[2] Bifrost (IEEE ICNP 2023) — PFC headroom ≈ 2× BDP; long-distance
-lossless points.** "PFC requires a buffer of 2Δ" (Δ = BDP). Testbed: 80 km /
-100 Gbps → 400 µs one-way, **BDP 9.5 MB**, 15.5 MB reserved per link.
+**[2] Bifrost (IEEE ICNP 2023) — PFC headroom ≈ 2× one-way BDP;
+long-distance lossless points.** "PFC requires a buffer of 2Δ" (Δ = the
+one-way BDP). Testbed: 80 km / 100 Gbps → 400 µs one-way, headroom
+requirement 2Δ ≈ **9.5 MB**, 15.5 MB reserved per link in practice.
 Simulation: 400 Gbps / 600 km (3 ms one-way) → **286 MB headroom** on the
 long-haul port. Also: InfiniBand's 12-bit FCCL credit field "limits IB to at
 most 1 kilometer for a 100 Gbps link." Pins `PFC_HEADROOM_BDP_MULT`,
@@ -224,18 +225,18 @@ the host. Direct Connect offers multi-location redundancy.
 [Nimbus](https://docs.coreweave.com/docs/platform/fleet-management/nimbus)
 
 **[25] SemiAnalysis ClusterMAX 2.0 (Nov 6, 2025).** The de-facto neocloud
-quality bar: CoreWeave sole Platinum (still, through the Apr 2026 v2.1
+quality bar: CoreWeave sole Platinum (as of the Nov 2025 v2.0
 update); documented failure modes at lower tiers include GPUDirect RDMA
 disabled and PCIe ACS left on — evidence that the "GPU-first cloud" label
 spans a wide competence range.
 [ClusterMAX 2.0](https://newsletter.semianalysis.com/p/clustermax-20-the-industry-standard)
 
 **[26] Time-to-power is the edge's opening.** Northern Virginia
-interconnection up to ~7 years application-to-energization; CAISO ~5.5;
-ERCOT/MISO ~5. ERCOT alone tracks ~226 GW of large-load interconnection
-requests (~¾ data centers; ERCOT flags duplicative "phantom" requests).
-Aggregation hubs sit on *existing* telecom power entitlements — the only
-tier that skips the queue.
+interconnection runs up to ~7 years application-to-energization (national
+average ~4). ERCOT alone tracked ~226 GW of large-load interconnection
+requests as of Nov 2025 (~¾ data centers; observers flag duplicative
+"phantom" requests). Aggregation hubs sit on *existing* telecom power
+entitlements — the only tier that skips the queue.
 [2026 market guide](https://www.constructionowners.com/insights/how-long-it-actually-takes-to-power-a-data-center-in-2026-a-u-s-market-by-market-reality-check) ·
 [Latitude Media / ERCOT](https://www.latitudemedia.com/news/ercots-large-load-queue-has-nearly-quadrupled-in-a-single-year/)
 

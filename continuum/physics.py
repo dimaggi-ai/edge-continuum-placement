@@ -7,8 +7,9 @@ at the metro boundary:
   1. Propagation delay  — light in standard single-mode fiber travels at
      c/n ~ 204,000 km/s, i.e. ~4.9 us/km one way. Nothing negotiates with it.
   2. Lossless headroom  — PFC-style losslessness must absorb ~2x the
-     bandwidth-delay product per link as switch buffer headroom; BDP grows
-     linearly with distance and line rate, switch buffers do not.
+     one-way bandwidth-delay product per link (a full round-trip of
+     line-rate data) as switch buffer headroom; BDP grows linearly with
+     distance and line rate, switch buffers do not.
   3. Collective latency — synchronous all-reduce pays the one-way latency
      2(n-1) times per ring pass; past the overlap budget the exposed time
      comes straight out of GPU utilization.
@@ -23,7 +24,7 @@ from dataclasses import dataclass
 
 FIBER_US_PER_KM = 4.9        # one-way propagation, SMF-28-class fiber (n~1.468)
 HOLLOW_CORE_US_PER_KM = 3.5  # hollow-core fiber, ~99.7% c in air
-PFC_HEADROOM_BDP_MULT = 2.0  # per-link lossless reservation ~ 2x BDP (Bifrost)
+PFC_HEADROOM_BDP_MULT = 2.0  # lossless reservation ~ 2x one-way BDP (Bifrost's 2-Delta)
 IB_VL_BUFFER_KB = 128        # per-VL credit buffer, native InfiniBand HCA-class
 
 
@@ -41,18 +42,25 @@ def rtt_ms(km: float, us_per_km: float = FIBER_US_PER_KM) -> float:
 
 def bdp_mb(rate_gbps: float, km: float,
            us_per_km: float = FIBER_US_PER_KM) -> float:
-    """Bandwidth-delay product of a link at `rate_gbps` over `km`, in MB.
+    """One-way bandwidth-delay product of a link at `rate_gbps` over `km`, MB.
 
-    Uses the round-trip time, which is what a pause/credit loop must cover:
-    the pause frame travels back while line-rate data keeps arriving.
+    One propagation delay's worth of line-rate data (Bifrost's Delta). A
+    pause/credit loop must cover ~2x this — the pause frame travels back one
+    way while line-rate data keeps arriving the other — which is what
+    pfc_headroom_mb charges.
     """
-    rtt_s = 2.0 * one_way_us(km, us_per_km) * 1e-6
-    return rate_gbps * 1e9 * rtt_s / 8.0 / 1e6
+    delay_s = one_way_us(km, us_per_km) * 1e-6
+    return rate_gbps * 1e9 * delay_s / 8.0 / 1e6
 
 
 def pfc_headroom_mb(rate_gbps: float, km: float,
                     mult: float = PFC_HEADROOM_BDP_MULT) -> float:
-    """Per-port buffer headroom a lossless (PFC) link must reserve, in MB."""
+    """Per-port buffer headroom a lossless (PFC) link must reserve, in MB.
+
+    ~2x the one-way BDP = one full round-trip of line-rate data (Bifrost's
+    2-Delta): ~9.8 MB at 100G/80 km (Bifrost's testbed reserved 9.5 MB),
+    ~294 MB at 400G/600 km (Bifrost simulated 286 MB).
+    """
     return mult * bdp_mb(rate_gbps, km)
 
 
@@ -62,12 +70,12 @@ def pfc_max_lossless_km(rate_gbps: float, headroom_mb: float,
 
     Inverts pfc_headroom_mb. A 400G port with 64 MB of dedicated headroom
     (already generous on merchant silicon shared across ports) reaches only
-    ~65 km; national distances need hundreds of MB per port.
+    ~131 km; national distances need hundreds of MB per port.
     """
     if headroom_mb <= 0 or rate_gbps <= 0:
         raise ValueError("rate and headroom must be > 0")
-    rtt_s = headroom_mb * 1e6 * 8.0 / (mult * rate_gbps * 1e9)
-    return rtt_s * 1e6 / (2.0 * FIBER_US_PER_KM)
+    one_way_s = headroom_mb * 1e6 * 8.0 / (mult * rate_gbps * 1e9)
+    return one_way_s * 1e6 / FIBER_US_PER_KM
 
 
 def ib_credit_max_km(rate_gbps: float,

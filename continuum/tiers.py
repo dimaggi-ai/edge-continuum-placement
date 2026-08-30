@@ -50,7 +50,7 @@ class Tier:
 
 TOWER = Tier(
     name="tower",
-    ai_power_kw=1.5,        # rectifier headroom at a 5-15 kW macro site
+    ai_power_kw=1.5,        # rectifier headroom at a 2.5-19 kW macro site
     cooling="air",
     max_fabric_gpus=2,      # no scale-out fabric: PCIe inside one 2RU box
     max_gpu_watts=75.0,     # L4-class (72 W); H100-class does not fit
@@ -104,8 +104,12 @@ LADDER = (TOWER, HUB, METRO_POP, CENTRAL)
 
 
 def tier(name: str) -> Tier:
+    """Look up a ladder tier by name, prefix, or substring ('hub' works)."""
     for t in LADDER:
-        if t.name == name or t.name.startswith(name):
+        if t.name == name:
+            return t
+    for t in LADDER:
+        if t.name.startswith(name) or name in t.name:
             return t
     raise KeyError(f"unknown tier {name!r}; know {[t.name for t in LADDER]}")
 

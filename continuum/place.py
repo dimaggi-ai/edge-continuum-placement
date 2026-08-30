@@ -2,13 +2,16 @@
 
 The rule the engine encodes (and the study defends): centralize by default —
 scale economies live at the top of the ladder — and place edgeward only when
-a constraint FORCES it. Five gates can force or forbid a placement:
+a constraint FORCES it. Four gates can force or forbid a placement:
 
   fabric   - collective class vs what the site fabric can hold
   power    - GPU count x TDP vs the AI power envelope, and cooling class
   latency  - fronthaul budget (R0) or network RTT budget (interactive)
   gravity  - sovereignty pins; raw-ingest backhaul makes distance costly
-  physics  - 'large' collectives cannot span sites (latency domains)
+
+The latency-domain physics (physics.py) is not a fifth runtime gate: it is
+where the tier envelopes COME FROM — max_fabric_gpus and the fabric class
+encode which collectives each site separation can physically hold.
 
 Verdicts: VIABLE, COSTLY (works, but hauls raw ingest a tier too far),
 BLOCKED (hard gate). The recommendation is the most central VIABLE tier;

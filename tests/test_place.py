@@ -10,7 +10,7 @@ sys.path.insert(0, __file__.rsplit("/tests/", 1)[0])
 from continuum.fleet import compare  # noqa: E402
 from continuum.place import evaluate, place  # noqa: E402
 from continuum.tiers import CENTRAL, HUB, LADDER, METRO_POP, TOWER, custom  # noqa: E402
-from continuum.workloads import LIBRARY, workload  # noqa: E402
+from continuum.workloads import LIBRARY, Workload, workload  # noqa: E402
 
 
 def verdict(wname, tier):
@@ -46,11 +46,31 @@ class TestHardGates(unittest.TestCase):
                 self.assertEqual(evaluate(w, CENTRAL).status, "BLOCKED",
                                  w.name)
 
-    def test_hot_gpus_never_at_towers(self):
-        # 700 W parts exceed the tower's air-cooled envelope.
+    def test_pod_workloads_fabric_blocked_at_towers(self):
+        # Pod-collective jobs die on the fabric gate first at the tower.
         self.assertEqual(verdict("lora-finetune", TOWER).gate, "fabric")
         v = evaluate(workload("sovereign-inference-70b"), TOWER)
         self.assertEqual(v.status, "BLOCKED")
+
+    def test_hot_gpus_power_blocked_at_towers(self):
+        # A single fabric-less 700 W part clears the fabric gate and must
+        # then die on the POWER gate: the tower's 75 W accelerator envelope.
+        hot = Workload("hot-single-gpu", float("inf"), 0.0, 1, 700.0,
+                       "none", "mixed")
+        v = evaluate(hot, TOWER)
+        self.assertEqual(v.status, "BLOCKED")
+        self.assertEqual(v.gate, "power")
+
+    def test_power_gate_fires_at_the_hub(self):
+        # 64 x 700 W fits the hub's 64-GPU fabric but not its 50 kW
+        # envelope (feeds 52 at 1.35x overhead) — the power gate must
+        # catch what the fabric gate lets through.
+        full_pod = Workload("full-pod-serving", float("inf"), 0.0, 64,
+                            700.0, "pod", "mixed")
+        v = evaluate(full_pod, HUB)
+        self.assertEqual(v.status, "BLOCKED")
+        self.assertEqual(v.gate, "power")
+        self.assertIn("feeds 52", v.detail)
 
 
 class TestConsensusMatrix(unittest.TestCase):

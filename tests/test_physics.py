@@ -27,18 +27,19 @@ class TestPropagation(unittest.TestCase):
 
 class TestLosslessHeadroom(unittest.TestCase):
     def test_bifrost_testbed_point(self):
-        # Bifrost (ICNP'23): 80 km / 100G -> one-way 400 us, BDP ~9.5 MB.
-        # Our 4.9 us/km gives 392 us one-way; BDP within ~5%.
-        bdp = physics.bdp_mb(100, 80)
-        self.assertAlmostEqual(bdp, 9.5, delta=0.5)
+        # Bifrost (ICNP'23): 80 km / 100G testbed reserved ~9.5 MB of
+        # headroom (~2x the one-way BDP, Bifrost's 2-Delta). Our 4.9 us/km
+        # gives 392 us one-way -> headroom ~9.8 MB, within ~5%.
+        self.assertAlmostEqual(physics.pfc_headroom_mb(100, 80), 9.5,
+                               delta=0.5)
 
     def test_bifrost_simulation_point(self):
-        # Bifrost: 400G / 600 km (one-way 3 ms) -> headroom ~286 MB.
-        # One RTT-BDP at our propagation constant:
-        bdp = physics.bdp_mb(400, 600)
-        self.assertAlmostEqual(bdp, 286.0, delta=15.0)
+        # Bifrost: 400G / 600 km (one-way ~3 ms) -> headroom ~286 MB.
+        # 2x one-way BDP at our propagation constant gives ~294 MB.
+        self.assertAlmostEqual(physics.pfc_headroom_mb(400, 600), 286.0,
+                               delta=15.0)
 
-    def test_headroom_is_twice_bdp(self):
+    def test_headroom_is_twice_one_way_bdp(self):
         self.assertAlmostEqual(
             physics.pfc_headroom_mb(400, 100),
             2.0 * physics.bdp_mb(400, 100))
@@ -86,16 +87,22 @@ class TestCollectives(unittest.TestCase):
         self.assertLess(physics.sync_step_efficiency(self.SCN, 1000), 0.90)
 
     def test_bandwidth_cannot_buy_back_distance(self):
-        # Corning: doubling bandwidth improved overlap <=0.66%.
-        # At 1000 km, doubling our inter-site bandwidth must improve
-        # efficiency far less than halving the distance does.
-        base = physics.sync_step_efficiency(self.SCN, 1000)
-        double_bw = physics.CollectiveScenario(
-            n_ranks=16, payload_gb=1.0, inter_site_gbps=800.0,
-            compute_ms=200.0)
-        closer = physics.sync_step_efficiency(self.SCN, 500)
-        wider = physics.sync_step_efficiency(double_bw, 1000)
-        self.assertGreater(closer - base, (wider - base) * 2)
+        # Corning: doubling bandwidth improved things <=0.66%. Use a
+        # scenario whose bandwidth term is PARTIALLY exposed (56 ms of
+        # ring bandwidth time vs 50 ms of compute) so doubling bandwidth
+        # genuinely helps a little — and still does far less than
+        # halving the distance does.
+        tight = physics.CollectiveScenario(
+            n_ranks=16, payload_gb=1.5, inter_site_gbps=400.0,
+            compute_ms=50.0)
+        wider_scn = physics.CollectiveScenario(
+            n_ranks=16, payload_gb=1.5, inter_site_gbps=800.0,
+            compute_ms=50.0)
+        base = physics.sync_step_efficiency(tight, 1000)
+        wider = physics.sync_step_efficiency(wider_scn, 1000)
+        closer = physics.sync_step_efficiency(tight, 500)
+        self.assertGreater(wider, base)          # bandwidth is not useless...
+        self.assertGreater(closer - base, (wider - base) * 5)  # ...just weak
 
 
 class TestDomains(unittest.TestCase):

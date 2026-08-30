@@ -7,6 +7,14 @@ megawatts arrive in H100-class pods behind staffed, liquid-capable sites.
 The two fleets do not host the same workload classes, and per watt they do
 not deliver the same schedulable compute.
 
+Accounting note: the per-MW comparison charges each fleet its PROVISIONED
+AI power envelope, because the envelope is what the operator builds and
+pays for (feed, rectifiers, cooling, battery). Per *consumed* watt the
+L4 silicon is actually competitive (3.4 vs 2.8 TFLOPS/W dense FP8) — the
+tower fleet's problem is that the 2-GPU fabric quantum strands ~87% of
+its envelope, and that its quanta host 6 of 12 workload classes. Both
+powers are reported so the reader can take either view.
+
 Dense FP8 throughput calibration (see REFERENCES.md):
   L4-class   72 W  ~242 TFLOPS dense FP8
   H100-class 700 W ~1979 TFLOPS dense FP8
@@ -43,6 +51,19 @@ class FleetTier:
     @property
     def total_ai_mw(self) -> float:
         return self.tier.ai_power_kw * self.n_sites / 1000.0
+
+    @property
+    def consumed_mw(self) -> float:
+        """Power the fleet actually draws (GPU TDP x 1.35 node overhead)."""
+        watts, _ = GPU_SPECS[self.gpu]
+        return self.total_gpus * watts * 1.35 / 1e6
+
+    @property
+    def stranded_fraction(self) -> float:
+        """Share of the provisioned envelope the fleet cannot use."""
+        if self.total_ai_mw == 0:
+            return 0.0
+        return 1.0 - self.consumed_mw / self.total_ai_mw
 
     @property
     def total_pflops_fp8(self) -> float:
@@ -83,6 +104,8 @@ class Comparison:
             "tower_sites": t.n_sites,
             "tower_gpus": t.total_gpus,
             "tower_ai_mw": round(t.total_ai_mw, 1),
+            "tower_consumed_mw": round(t.consumed_mw, 1),
+            "tower_stranded_pct": round(t.stranded_fraction * 100, 0),
             "tower_pflops_fp8": round(t.total_pflops_fp8, 0),
             "tower_pflops_per_mw": round(t.pflops_per_mw, 0),
             "tower_scheduling_quantum_gpus": t.gpus_per_site,
@@ -90,6 +113,8 @@ class Comparison:
             "hub_sites": h.n_sites,
             "hub_gpus": h.total_gpus,
             "hub_ai_mw": round(h.total_ai_mw, 1),
+            "hub_consumed_mw": round(h.consumed_mw, 1),
+            "hub_stranded_pct": round(h.stranded_fraction * 100, 0),
             "hub_pflops_fp8": round(h.total_pflops_fp8, 0),
             "hub_pflops_per_mw": round(h.pflops_per_mw, 0),
             "hub_scheduling_quantum_gpus": h.gpus_per_site,
