@@ -15,7 +15,8 @@ class TestPropagation(unittest.TestCase):
         self.assertAlmostEqual(physics.one_way_us(100), 490.0, delta=1.0)
 
     def test_coast_to_coast(self):
-        # NY-SF 4,148 km fiber route: ~21 ms one-way, ~42 ms RTT (HPBN).
+        # NY-SF 4,148 km GREAT-CIRCLE distance: ~21 ms one-way, ~42 ms RTT
+        # (HPBN Table 1-1; the source notes real routes are longer).
         self.assertAlmostEqual(physics.one_way_us(4148) / 1000, 20.3, delta=1.5)
         self.assertAlmostEqual(physics.rtt_ms(4148), 40.7, delta=3.0)
 

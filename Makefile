@@ -1,7 +1,10 @@
-.PHONY: test matrix fleet physics figures install
+.PHONY: test matrix fleet physics figures install validation
 
-test:
+test: validation
 	python3 -m unittest discover -s tests -v
+
+validation:
+	python3 validation.py
 
 matrix:
 	python3 -m continuum.cli matrix

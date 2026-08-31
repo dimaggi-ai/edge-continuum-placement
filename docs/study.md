@@ -129,7 +129,7 @@ meet; the data-plane discipline stands.
 **Distance you can't remove, you pay for in one of two currencies:
 latency or egress.** Latency: a national path costs ~5 ms of propagation
 plus queuing/peering overhead well above the fiber floor (HPBN's observed
-NY–SF RTTs run ~1.5–1.7× the 42 ms propagation minimum [1]; our ladder
+NY–SF RTTs run ~1.4–1.7× the 42 ms great-circle propagation minimum [1]; our ladder
 stipulates a harsher 2–4×) — our tiers
 carry an explicit `transit_rtt_ms` term for this, and it is what blocks
 the near-RT RIC loop (10 ms budget) from the central factory while
@@ -234,7 +234,7 @@ against this arithmetic.
   from.
 - **`transit_rtt_ms` is a stipulated overhead, not a measured path.** The
   0.1/0.3/1/10 ms ladder stipulates national paths at 2–4× the propagation
-  floor (observed paths in [1] run ~1.5–1.7×); a national operator with a
+  floor (observed paths in [1] run ~1.4–1.7× the 42 ms figure); a national operator with a
   clean backbone could halve the central penalty, which would flip
   exactly one verdict — `ric-xapp-loop`, the only transit-sensitive
   archetype, fails central by just 4.9 ms and would move there — and

@@ -47,10 +47,55 @@ place(workload("ran-l1-baseband"), rural).recommended   # -> 'tower'
 
 That last line is the tower's honest job description: it earns a GPU exactly where geography strands the radio beyond the hub's ~20 km fronthaul reach.
 
+## The validation project
+
+The invariant suite pins the model's constants to their sources. The
+[validation registry](validation.py) does the other half: it runs the
+model against data it was **never fitted to**, and against synthetic
+fleets, in three honest kinds. **Calibrated** points hold quoted
+arithmetic in place (the O-RAN 100 µs budget as a 20.4 km C-RAN radius
+[11]; and the New York–San Francisco anchor — 4,148 km, which the source
+gives as a **great-circle** distance and calls "unrealistically
+optimistic", not a fiber route [1] — checked against the source's own
+5 µs/km arithmetic (41.48 ms) so the tolerance covers only the model's
+4.9 µs/km rounding, not the source's "~" as well). **Emergent** points
+meet public geography: haversine distances from published city
+coordinates put the two pairs that can hold synchronous RDMA collectives
+at ≤14.25 km and the nearest pair that cannot at 62.16 km — a 47.9 km
+empty band with the 40 km MetroX-3 boundary [4] sitting inside it. The
+geography does the separating, so the verdicts would be unchanged for
+any boundary in that band; that is the honest claim, and it is why the
+registry pins the *gap* rather than a count of permitted pairs, which
+moves as soon as you add a pair (Ashburn↔Washington DC is 41.8 km). The
+striking case stands: San Francisco↔Santa Clara, 62 km apart *inside one
+metropolitan area*, is outside fabric reach. The model's propagation
+floor for New York–San Francisco (40.5 ms) also sits under the observed
+60–70 ms internet band, at a 1.48–1.73× route factor — only that
+one-sided claim is asserted, since a floor above measurement would be a
+bug.
+
+**Sanity** points regression-guard the engine on 200 seeded random
+workloads. They do not *prove* it lawful, and the distinction is not
+pedantic: an earlier version of this registry passed with the latency
+gate, the power gate or the fabric gate **deleted outright**, because
+each point compared a count against a number computed in the same loop.
+Every expected count is now a hardcoded constant, `tests/` deletes each
+gate in turn and requires the registry to go red, and the points report
+what they actually cover — the latency gate blocks 119 of 200 workloads
+across seven distances (41 of them at every distance, so vacuously
+monotone), 82 of 200 fit no tier at all, and centralize-by-default is
+measured on the 10 workloads no gate applies to. Four anchors the
+registry deliberately does not check are named in its `DECLINED` list
+and printed with the table.
+
+```
+make validation  # the registry: public geography + synthetic topologies
+```
+
 ## Reproduce
 
 ```
-make test        # 42 invariant tests, pinned to published data points [2, 6]
+make test        # invariant tests + the validation registry
 make figures     # regenerates figures/ (needs matplotlib)
 ```
 

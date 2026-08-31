@@ -18,6 +18,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Run tests
         run: python -m unittest discover -s tests -v
+      - name: Validation registry (public geography + a seeded synthetic fleet)
+        run: python validation.py
       - name: CLI smoke
         run: |
           python -m continuum.cli matrix

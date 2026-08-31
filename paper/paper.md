@@ -34,7 +34,7 @@ Operators evaluating AI-RAN face a placement question dressed up as a product qu
 
 ## 4. Calibration and validation
 
-Constants pin to published data points and the suite fails if they drift: Bifrost's 9.5 MB computed headroom requirement (80 km, 100 G testbed; 15.5 MB reserved in practice) and simulated 286 MB (600 km, 400 G); Corning's ASTRA-sim behaviors (~26× at 1,000 km, ≤0.66% from doubling bandwidth, near-complete overlap below 10 km); the ~41 ms NY–SF propagation RTT over ~4,148 km of route fiber at 4.9 µs/km; the ~20.4 km C-RAN radius from the ~100 µs one-way fronthaul budget; MetroX-3's 40 km ceiling and its absence from shipping AI clusters; GPU spec-sheet power/throughput for L4 and H100.
+Constants pin to published data points and the suite fails if they drift: Bifrost's 9.5 MB computed headroom requirement (80 km, 100 G testbed; 15.5 MB reserved in practice) and simulated 286 MB (600 km, 400 G); Corning's ASTRA-sim behaviors (~26× at 1,000 km, ≤0.66% from doubling bandwidth, near-complete overlap below 10 km); the ~41 ms NY–SF propagation RTT over the ~4,148 km great-circle distance at 4.9 µs/km (the source's own figure; real fiber routes are longer); the ~20.4 km C-RAN radius from the ~100 µs one-way fronthaul budget; MetroX-3's 40 km ceiling and its absence from shipping AI clusters; GPU spec-sheet power/throughput for L4 and H100.
 
 ## 5. Related work
 

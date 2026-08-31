@@ -8,8 +8,12 @@ URLs on 2026-08-29.
 
 **[1] Fiber propagation ≈ 4.9 µs/km one-way.** Standard SMF, n ≈ 1.468
 (~204,000 km/s). Pins `FIBER_US_PER_KM`. Canonical long-haul point: New
-York–San Francisco, 4,148 km fiber route → ~21 ms one-way / **~42 ms RTT**
-(theoretical fiber minimum; observed internet RTTs run 60–70+ ms).
+York–San Francisco, 4,148 km **great-circle** distance → ~21 ms one-way /
+**~42 ms RTT**. The source is explicit that this assumes a cable laid "along
+the great-circle path" and calls the result "unrealistically optimistic";
+real NY–SF fiber routes run ~1.3–1.5× longer, and observed internet RTTs are
+60–70+ ms. An earlier version of this entry called 4,148 km a "fiber route",
+which the source does not support.
 [MapYourTech, "The 5-Microsecond Rule"](https://mapyourtech.com/the-5-microsecond-rule-fiber-propagation-latency-per-kilometer/) ·
 [M2 Optics, "Calculating Optical Fiber Latency"](https://www.m2optics.com/blog/bid/70587/calculating-optical-fiber-latency) ·
 [Grigorik, *High Performance Browser Networking*, Table 1-1](https://hpbn.co/primer-on-latency-and-bandwidth/)
