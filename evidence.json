@@ -1,0 +1,253 @@
+{
+  "schema_version": "dimaggi-evidence/v1",
+  "coverage_scope": "Consequential headline claims, governing assumptions and model limits. Not a catalog of helper constants or proof that citations are correct.",
+  "sources": {
+    "continuum/tiers.py": {
+      "source_type": "model-assumption",
+      "location": "continuum/tiers.py",
+      "version_date": "2026-09-10 closure working tree; SHA-256 bound below",
+      "license_or_reuse": "Repository-authored analysis; third-party facts referenced, no new external raw data redistributed",
+      "scope": "Local authoritative definition or claim. External provenance retained in SOURCES/REFERENCES and inline citations; scenario choices are not empirical measurements."
+    },
+    "continuum/physics.py": {
+      "source_type": "model-assumption",
+      "location": "continuum/physics.py",
+      "version_date": "2026-09-10 closure working tree; SHA-256 bound below",
+      "license_or_reuse": "Repository-authored analysis; third-party facts referenced, no new external raw data redistributed",
+      "scope": "Local authoritative definition or claim. External provenance retained in SOURCES/REFERENCES and inline citations; scenario choices are not empirical measurements."
+    },
+    "continuum/fleet.py": {
+      "source_type": "model-assumption",
+      "location": "continuum/fleet.py",
+      "version_date": "2026-09-10 closure working tree; SHA-256 bound below",
+      "license_or_reuse": "Repository-authored analysis; third-party facts referenced, no new external raw data redistributed",
+      "scope": "Local authoritative definition or claim. External provenance retained in SOURCES/REFERENCES and inline citations; scenario choices are not empirical measurements."
+    },
+    "REFERENCES.md": {
+      "source_type": "model-assumption",
+      "location": "REFERENCES.md",
+      "version_date": "2026-09-10 closure working tree; SHA-256 bound below",
+      "license_or_reuse": "Repository-authored analysis; third-party facts referenced, no new external raw data redistributed",
+      "scope": "Local authoritative definition or claim. External provenance retained in SOURCES/REFERENCES and inline citations; scenario choices are not empirical measurements."
+    },
+    "README.md": {
+      "source_type": "model-assumption",
+      "location": "README.md",
+      "version_date": "2026-09-10 closure working tree; SHA-256 bound below",
+      "license_or_reuse": "Repository-authored analysis; third-party facts referenced, no new external raw data redistributed",
+      "scope": "Local authoritative definition or claim. External provenance retained in SOURCES/REFERENCES and inline citations; scenario choices are not empirical measurements."
+    }
+  },
+  "inputs": [
+    {
+      "name": "tower AI power",
+      "unit": "kW",
+      "evidence_class": "scenario",
+      "sources": [
+        "continuum/tiers.py"
+      ],
+      "transformation": "Declared tier envelope, not universal tower limit",
+      "uncertainty": "Deliberately hypothetical/operator policy; not an observed universal bound",
+      "affected_outputs": [
+        "published conclusion",
+        "README.md"
+      ],
+      "value": 1.5,
+      "valid_bounds": [
+        0,
+        150
+      ]
+    },
+    {
+      "name": "hub AI power",
+      "unit": "kW",
+      "evidence_class": "scenario",
+      "sources": [
+        "continuum/tiers.py"
+      ],
+      "transformation": "Declared tier envelope",
+      "uncertainty": "Deliberately hypothetical/operator policy; not an observed universal bound",
+      "affected_outputs": [
+        "published conclusion",
+        "README.md"
+      ],
+      "value": 50,
+      "valid_bounds": [
+        0,
+        5000
+      ]
+    },
+    {
+      "name": "metro AI power",
+      "unit": "kW",
+      "evidence_class": "scenario",
+      "sources": [
+        "continuum/tiers.py"
+      ],
+      "transformation": "Declared tier envelope",
+      "uncertainty": "Deliberately hypothetical/operator policy; not an observed universal bound",
+      "affected_outputs": [
+        "published conclusion",
+        "README.md"
+      ],
+      "value": 2000,
+      "valid_bounds": [
+        0,
+        200000
+      ]
+    },
+    {
+      "name": "central AI power",
+      "unit": "kW",
+      "evidence_class": "scenario",
+      "sources": [
+        "continuum/tiers.py"
+      ],
+      "transformation": "Declared tier envelope",
+      "uncertainty": "Deliberately hypothetical/operator policy; not an observed universal bound",
+      "affected_outputs": [
+        "published conclusion",
+        "README.md"
+      ],
+      "value": 100000,
+      "valid_bounds": [
+        0,
+        10000000
+      ]
+    },
+    {
+      "name": "host overhead",
+      "unit": "ratio",
+      "evidence_class": "scenario",
+      "sources": [
+        "continuum/tiers.py"
+      ],
+      "transformation": "Converts accelerator TDP to planning power",
+      "uncertainty": "Deliberately hypothetical/operator policy; not an observed universal bound",
+      "affected_outputs": [
+        "published conclusion",
+        "README.md"
+      ],
+      "value": 1.35,
+      "valid_bounds": [
+        0,
+        135
+      ]
+    },
+    {
+      "name": "tower TDP ceiling",
+      "unit": "W/GPU",
+      "evidence_class": "scenario",
+      "sources": [
+        "continuum/tiers.py"
+      ],
+      "transformation": "Site-specific engineering assumption",
+      "uncertainty": "Deliberately hypothetical/operator policy; not an observed universal bound",
+      "affected_outputs": [
+        "published conclusion",
+        "README.md"
+      ],
+      "value": 75,
+      "valid_bounds": [
+        0,
+        7500
+      ]
+    },
+    {
+      "name": "hub TDP ceiling",
+      "unit": "W/GPU",
+      "evidence_class": "scenario",
+      "sources": [
+        "continuum/tiers.py"
+      ],
+      "transformation": "Site-specific engineering assumption, not physical air cutoff",
+      "uncertainty": "Deliberately hypothetical/operator policy; not an observed universal bound",
+      "affected_outputs": [
+        "published conclusion",
+        "README.md"
+      ],
+      "value": 700,
+      "valid_bounds": [
+        0,
+        70000
+      ]
+    }
+  ],
+  "results": [
+    {
+      "name": "tower-to-hub schedulable ratio",
+      "unit": "ratio",
+      "evidence_class": "derived",
+      "sources": [
+        "README.md"
+      ],
+      "transformation": "Rounded synthetic fleet comparison, not measured hardware throughput",
+      "uncertainty": "Scope and qualifications stated in transformation and linked source; no unreported confidence interval",
+      "affected_outputs": [
+        "published conclusion",
+        "README.md"
+      ],
+      "value": 6.4,
+      "valid_bounds": [
+        0,
+        640
+      ]
+    },
+    {
+      "name": "stranded tower power",
+      "unit": "fraction",
+      "evidence_class": "derived",
+      "sources": [
+        "README.md"
+      ],
+      "transformation": "Rounded result of selected two-GPU site quanta",
+      "uncertainty": "Scope and qualifications stated in transformation and linked source; no unreported confidence interval",
+      "affected_outputs": [
+        "published conclusion",
+        "README.md"
+      ],
+      "value": 0.87,
+      "valid_bounds": [
+        0,
+        1
+      ]
+    },
+    {
+      "name": "placement recommendation",
+      "unit": "claim",
+      "evidence_class": "derived",
+      "sources": [
+        "continuum/tiers.py"
+      ],
+      "transformation": "Centralize unless a modeled fabric/power/latency/gravity constraint forces a different tier",
+      "uncertainty": "Scope and qualifications stated in transformation and linked source; no unreported confidence interval",
+      "affected_outputs": [
+        "published conclusion",
+        "README.md"
+      ],
+      "statement": "Centralize unless a modeled fabric/power/latency/gravity constraint forces a different tier"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "continuum/tiers.py",
+      "sha256": "a7caf509401848e53b73335be55cb769a3f8725e7679893f01ebcba4f1720754"
+    },
+    {
+      "path": "continuum/physics.py",
+      "sha256": "322322522c0cb863151abb8fba6298edfdf490e51e5950e5da4480ba0500e824"
+    },
+    {
+      "path": "continuum/fleet.py",
+      "sha256": "e4835977362fe24653b284b4280a0824d66ec284d04075c74708470e30ec361c"
+    },
+    {
+      "path": "REFERENCES.md",
+      "sha256": "d3a1422f6202fc8bddc58ff2daf78634f240e1ffcd82490dd3d8c4f65af71a1e"
+    },
+    {
+      "path": "README.md",
+      "sha256": "3ed03c1cd4dfa3fcca2c6f727c07df6ff9830affb99d50a499a8ca361550f192"
+    }
+  ]
+}

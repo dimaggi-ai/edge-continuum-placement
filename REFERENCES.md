@@ -147,9 +147,11 @@ nominal (HPE datasheet: 132 kW max = 115 kW liquid + 17 kW air).
 Direct-to-chip cold plates capture ~70–75% of rack heat at pPUE
 ~1.02–1.03; practical air-cooling ceiling ~40–50 kW/rack; single-phase D2C
 serves current ~1–1.5 kW parts with ~1.5 kW as the widely cited transition
-toward two-phase. Pins `cooling`/`max_gpu_watts` per tier and
-`AIR_COOLED_MAX_GPU_W` (350 W: the heaviest parts sold for air-cooled edge
-servers are L40S-class).
+toward two-phase. The tier's `max_gpu_watts` is a declared engineering
+envelope, not a physical air/liquid boundary. The former universal 350 W
+air-cooling cutoff was removed: NVIDIA's air-cooled DGX H100 system uses
+eight H100 GPUs and specifies front-to-back airflow and 10.2 kW system power.
+[NVIDIA DGX H100/H200 user guide](https://docs.nvidia.com/dgx/dgxh100-user-guide/introduction-to-dgxh100.html).
 [HPE GB200 NVL72](https://buy.hpe.com/us/en/compute/rack-scale-system/nvidia-nvl-system/nvidia-gb200-nvl72-by-hpe/p/1014890104) ·
 [Vertiv, liquid cooling options](https://www.vertiv.com/en-us/solutions/learn-about/liquid-cooling-options-for-data-centers/) ·
 [Introl, 50 kW thermal limits](https://introl.com/blog/liquid-cooling-gpu-data-centers-50kw-thermal-limits-guide) ·

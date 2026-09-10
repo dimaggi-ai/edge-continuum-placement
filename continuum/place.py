@@ -33,8 +33,8 @@ FRONTHAUL_BUDGET_US = 100.0
 # at cloud-egress-class transfer pricing is thousands of dollars monthly —
 # the 'intelligent egress control' line item, priced.
 INGEST_COSTLY_GBPS = 0.25
-# Cooling: air handles this much per accelerator before liquid is required.
-AIR_COOLED_MAX_GPU_W = 350.0
+# Cooling feasibility is a declared site envelope (Tier.max_gpu_watts),
+# not a universal accelerator-TDP boundary between air and liquid cooling.
 
 
 @dataclass(frozen=True)
@@ -66,9 +66,6 @@ def _power_gate(w: Workload, t: Tier) -> str | None:
     if w.gpu_watts > t.max_gpu_watts:
         return (f"{w.gpu_watts:.0f} W accelerators exceed the "
                 f"{t.max_gpu_watts:.0f} W envelope of '{t.name}'")
-    if t.cooling == "air" and w.gpu_watts > AIR_COOLED_MAX_GPU_W:
-        return (f"{w.gpu_watts:.0f} W parts need liquid cooling; "
-                f"'{t.name}' is air-only")
     fits = t.power_gpus(w.gpu_watts)
     if w.gpus > fits:
         return (f"needs {w.gpus} x {w.gpu_watts:.0f} W; the "
