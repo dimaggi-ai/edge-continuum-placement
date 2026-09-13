@@ -1,0 +1,18 @@
+[
+  {
+    "repo": "edge-continuum-placement",
+    "label": "AI INFRASTRUCTURE RESEARCH",
+    "title": [
+      "Where should",
+      "AI workloads run?"
+    ],
+    "subtitle": [
+      "A placement engine for fabric,",
+      "power, latency, and data constraints."
+    ],
+    "fontSize": 58,
+    "background": "illustration-v2.png",
+    "output": ".",
+    "source_readme_commit": "0163a6fda04547e50ea0591793094dedb06d02b5"
+  }
+]
