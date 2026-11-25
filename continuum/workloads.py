@@ -13,6 +13,7 @@ local wired camera LAN, internet last mile) paid regardless of tier.
 """
 
 from dataclasses import dataclass
+from ._validation import real, count, name_string, choice, boolean
 
 
 @dataclass(frozen=True)
@@ -38,6 +39,20 @@ class Workload:
     # R0 hard-real-time radio, R1 control, R2 tenant AI.
     resilience_class: str = "R2"
     note: str = ""
+
+    def __post_init__(self):
+        name_string('name', self.name)
+        real('latency_sla_ms', self.latency_sla_ms, allow_infinity=True)
+        for field in ('access_rtt_ms', 'ingest_gbps'):
+            real(field, getattr(self, field))
+        real('gpu_watts', self.gpu_watts, positive=True)
+        count('gpus', self.gpus, 1)
+        choice('collective', self.collective, ('none', 'pod', 'large'))
+        choice('data_gravity', self.data_gravity, ('local', 'mixed', 'central'))
+        choice('resilience_class', self.resilience_class, ('R0', 'R1', 'R2'))
+        boolean('sovereign', self.sovereign)
+        if not isinstance(self.note, str):
+            raise ValueError('note must be a string')
 
 
 LIBRARY: tuple[Workload, ...] = (
