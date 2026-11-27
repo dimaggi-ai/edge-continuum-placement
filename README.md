@@ -112,3 +112,7 @@ Python 3.10+, stdlib only; `matplotlib` only for figures. The tests pin the mode
 ---
 
 *Margaret (Maggie) Nanyonga — Founder & Principal Architect, [DIMAGGI AI](https://dimaggi.ai). Governed AI infrastructure: the control, reliability, and audit layer for autonomous systems operating production networks and compute.*
+
+### Input contract
+
+`Tier` and `Workload` constructors (including `dataclasses.replace` and tier `custom()` overrides) raise field-named `ValueError` for unsupported inputs. Real fields accept ordinary Python int/float values, excluding bool, and must be finite and nonnegative; workload GPU watts must be positive. Only `latency_sla_ms` permits positive infinity, the existing batch/no-network-SLA sentinel. Counts are ordinary integers (Tier capacity >= 0, workload GPUs >= 1) within the finite numeric range. Names must be nonempty strings; note is a string; flags are actual bools; cooling, fabric, collective, data-gravity and resilience categories use the exact existing spellings without coercion. Zero site capacity remains valid but cannot host a positive GPU demand. `power_gpus` requires finite positive GPU watts and overhead (including overhead below 1), and refuses undefined or nonfinite derived capacity before integer conversion. These are representation/domain checks, not new hardware limits or physical qualification. Other physics/fleet helpers and CLI physics inputs are outside this constructor-validation contract.

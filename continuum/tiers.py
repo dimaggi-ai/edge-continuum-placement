@@ -7,6 +7,8 @@ argument, not decoration. Sources for the defaults are in REFERENCES.md.
 """
 
 from dataclasses import dataclass, replace
+import math
+from ._validation import real, count, name_string, choice, boolean
 
 
 @dataclass(frozen=True)
@@ -34,6 +36,15 @@ class Tier:
     # Staffed site with liquid-cooling/NOC skills on hand?
     staffed: bool
 
+    def __post_init__(self):
+        name_string('name', self.name)
+        for field in ('ai_power_kw', 'max_gpu_watts', 'km_to_user', 'km_to_parent', 'transit_rtt_ms'):
+            real(field, getattr(self, field))
+        count('max_fabric_gpus', self.max_fabric_gpus, 0)
+        choice('cooling', self.cooling, ('air', 'liquid'))
+        choice('fabric', self.fabric, ('none', 'pod', 'full'))
+        boolean('staffed', self.staffed)
+
     def power_gpus(self, gpu_watts: float, overhead: float = 1.35) -> int:
         """How many GPUs of a given TDP the AI power envelope feeds.
 
@@ -41,9 +52,19 @@ class Tier:
         (1.35 ~ a lean air-cooled edge node; hyperscale PUE-inclusive
         figures are similar once facility overhead is counted).
         """
-        if gpu_watts <= 0:
-            raise ValueError("gpu_watts must be > 0")
-        return int(self.ai_power_kw * 1000 // (gpu_watts * overhead))
+        real('gpu_watts', gpu_watts, positive=True)
+        real('overhead', overhead, positive=True)
+        try:
+            watts = self.ai_power_kw * 1000
+            demand = gpu_watts * overhead
+            if not math.isfinite(watts) or not math.isfinite(demand) or demand <= 0:
+                raise ValueError("power_gpus derived capacity exceeds the finite numeric range")
+            capacity = watts // demand
+            if not math.isfinite(capacity):
+                raise ValueError("power_gpus derived capacity exceeds the finite numeric range")
+            return int(capacity)
+        except (OverflowError, ZeroDivisionError):
+            raise ValueError("power_gpus derived capacity exceeds the finite numeric range") from None
 
 
 # --- default ladder (all overridable; see REFERENCES.md) --------------------
